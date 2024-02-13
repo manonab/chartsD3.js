@@ -6,8 +6,8 @@ interface GlobalProps {
 }
 
 export const GlobalChart: React.FC<GlobalProps> = ({ value }) => {
-  const width = 600;
-  const height = 600;
+  const width = 400;
+  const height = 400;
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
@@ -21,17 +21,28 @@ export const GlobalChart: React.FC<GlobalProps> = ({ value }) => {
     const orangeZone = { min: 2.1, max: 3.0 };
     const redZone = { min: 3.1, max: 4.0 };
 
+    const maxAngle = Math.PI / 2;
+    let arrowRotation = 0;
+
+    if (value >= greenZone.min && value <= greenZone.max) {
+      arrowRotation = ((value - greenZone.min) / (greenZone.max - greenZone.min)) * maxAngle / 4;
+    } else if (value > greenZone.max && value <= yellowZone.max) {
+      arrowRotation = maxAngle;
+    }
+
     const totalAngle = Math.PI;
-    const greenAngle = (greenZone.max - greenZone.min) * (totalAngle / 4);
-    const yellowAngle = (yellowZone.max - yellowZone.min) * (totalAngle / 4);
-    const orangeAngle = (orangeZone.max - orangeZone.min) * (totalAngle / 4);
-    const redAngle = (redZone.max - redZone.min) * (totalAngle / 4);
+    const segments = 10;
 
     const pie = d3.pie<number>()
       .startAngle(-Math.PI / 2)
       .endAngle(Math.PI / 2);
 
-    const data = [greenAngle, yellowAngle, orangeAngle, redAngle];
+    const data = [
+      ...Array(segments).fill((greenZone.max - greenZone.min) * (totalAngle / 4) / segments),
+      ...Array(segments).fill((yellowZone.max - yellowZone.min) * (totalAngle / 4) / segments),
+      ...Array(segments).fill((orangeZone.max - orangeZone.min) * (totalAngle / 4) / segments),
+      ...Array(segments).fill((redZone.max - redZone.min) * (totalAngle / 4) / segments)
+    ];
 
     const arcGenerator = d3.arc<any, d3.DefaultArcObject>()
       .innerRadius(220)
@@ -44,34 +55,19 @@ export const GlobalChart: React.FC<GlobalProps> = ({ value }) => {
       .enter()
       .append('path')
       .attr("d", (d: any, i: number) => arcGenerator(d))
-      .attr('fill', (_, i) => colors[i])
+      .attr('fill', (_, i) => colors[Math.floor(i / segments)])
       .attr('transform', `translate(${width / 2}, ${height / 2})`);
 
-    const arrowLength = 100;
-    const arrowWidth = 10;
-    const arrowRotation = value * 180;
-
-    const arrowCoordinates = [
-      [0, 0],
-      [arrowLength, 0],
-      [arrowLength - arrowWidth, -arrowWidth / 2],
-      [arrowLength, 0],
-      [arrowLength - arrowWidth, arrowWidth / 2],
-      [arrowLength, 0]
-    ];
-    const lineGenerator = d3.line<number[]>();
-    const arrowLine = lineGenerator(arrowCoordinates);
-
     svg.append('path')
-      .attr('d', arrowLine)
+      .attr('d', 'M0,-5 L10,0 L0,5 Z')
       .attr('fill', 'black')
-      .attr('transform', `translate(${width / 2}, ${height / 2}) rotate(${arrowRotation})`);
+      .attr('transform', `translate(${width / 2}, ${height / 2}) rotate(${arrowRotation * (180 / Math.PI)})`);
 
   }, [value, height, width]);
 
+
+
   return (
-    <svg ref={svgRef} width={width} height={height} className="mx-auto my-20">
-      <g transform={`translate(${width / 2}, ${height / 2})`} />
-    </svg>
+    <svg ref={svgRef} width={width} height={height} />
   );
 };

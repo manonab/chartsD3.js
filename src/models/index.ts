@@ -13,3 +13,7 @@ export interface BubbleDatas {
     riskLevel: number;
     label: string;
 }
+export interface DataPoint {
+    category: string;
+    riskLevel: number;
+}

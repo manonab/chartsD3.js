@@ -53,7 +53,7 @@ const BubbleChart: React.FC<BubbleProps> = ({ data, color }) => {
         .attr('height', 8)
         .append('path')
         .attr('d', 'M-1,1 l2,-2 M0,8 l8,-8 M7,9 l2,-2')
-        .attr('stroke', color)
+        .attr('stroke', `${color}`)
         .attr('stroke-width', 2)
         .style('fill', 'none');
 

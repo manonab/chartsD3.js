@@ -7,8 +7,8 @@ interface DonutProps {
 }
 
 export const DonutChart: React.FC<DonutProps> = ({ data }) => {
-  const width = 480;
-  const height = 600;
+  const width = 400;
+  const height = 400;
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
@@ -20,8 +20,8 @@ export const DonutChart: React.FC<DonutProps> = ({ data }) => {
       "Ne sais pas": "#779FE5",
       "Sans réponses": "#153B7A"
     };
-    const innerRadius = 140;
-    const outerRadius = Math.min(width, height) / 2;
+    const innerRadius = 80;
+    const outerRadius = Math.min(width, height) / 3;
     const arcGenerator = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius);
 
     const pieGenerator = d3.pie<DataItem>().value(d => d.percentage);
@@ -61,7 +61,7 @@ export const DonutChart: React.FC<DonutProps> = ({ data }) => {
   }, [data, height, width]);
 
   return (
-    <svg ref={svgRef} width={width} height={height} className="mx-auto my-20">
+    <svg ref={svgRef} width={width} height={height}>
       <g transform={`translate(${width / 2}, ${height / 2})`} />
     </svg>
   );

@@ -8,7 +8,7 @@ export const Categorie: React.FC<CategorieProps> = ({ setIsColorSelected }) => {
   };
 
   return (
-    <div className="w-[500px] flex-wrap flex mx-auto gap-10 justify-between">
+    <div className="mx-20">
       <button
         onClick={() =>
           changeColor("#000000")}
